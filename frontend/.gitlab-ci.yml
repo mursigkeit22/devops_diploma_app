@@ -1,15 +1,13 @@
 include:
   - project: 'templates/ci'
     file: 'DockerInDockerTemplate.yml'
-  # - template: Security/SAST.gitlab-ci.yml
-  # - local: 'yml_configs/.frontend-test.yml'
-  - local: 'yml_configs/.ssh-before-script.yml'
+  - template: Security/SAST.gitlab-ci.yml
+  - local: 'yml_configs/.frontend-test.yml'
  
 stages:
-    # - test
+    - test
     - build
     - release
-    - deploy
 
 build-frontend-code-job:
   stage: build 
@@ -40,18 +38,4 @@ upload-frontend-latest:
     - docker pull $CI_REGISTRY_IMAGE/momo-frontend:$CI_COMMIT_SHA
     - docker tag $CI_REGISTRY_IMAGE/momo-frontend:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE/momo-frontend:latest
     - docker push $CI_REGISTRY_IMAGE/momo-frontend:latest
-
-deploy-frontend:
-  stage: deploy
-  image: alpine:3.15.0
-  rules:
-    - changes:
-      - frontend/**/*
-      when: manual
-  extends:
-    - .ssh-before-script
-  script:
-    - ssh ${DEV_USER}@${DEV_HOST} "export "CI_REGISTRY_USER=${CI_REGISTRY_USER}"; export "CI_REGISTRY_PASSWORD=${CI_REGISTRY_PASSWORD}"; export "CI_REGISTRY=${CI_REGISTRY}"; export "CI_REGISTRY_IMAGE=${CI_REGISTRY_IMAGE}"; setsid /bin/bash -s " < ./frontend/deploy-frontend.sh  
-
-
 
