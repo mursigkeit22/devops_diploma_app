@@ -3,16 +3,6 @@ include:
   - local: 'yml_configs/.frontend-test.yml'
  
 stages:
-   - build-test
-   - test
+    - test
 
-build-frontend-code-job:
-  stage: build-test  
-  rules:
-    - changes:
-      - frontend/**/*
-  script:
-    - cd frontend
-    - npm install
-    - npm run build
 
