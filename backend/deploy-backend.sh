@@ -11,5 +11,4 @@ docker run -d --name momoback \
     --network=momo_network \
     --restart always \
     --pull always \
-    -p 80:80 \
     ${CI_REGISTRY_IMAGE}/momo-backend:latest 
