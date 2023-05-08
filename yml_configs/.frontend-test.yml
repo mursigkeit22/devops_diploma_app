@@ -1,0 +1,16 @@
+spotbugs-sast:
+  rules:
+    - when: never
+  
+eslint-sast:
+  rules:
+    - changes:
+      - frontend/**/*
+nodejs-scan-sast:
+  rules:
+    - changes:
+      - frontend/**/*
+semgrep-sast:
+  rules:
+    - changes:
+      - frontend/**/* 
