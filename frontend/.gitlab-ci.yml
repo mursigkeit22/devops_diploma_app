@@ -1,2 +1,41 @@
+include:
+  - project: 'templates/ci'
+    file: 'DockerInDockerTemplate.yml'
+  - template: Security/SAST.gitlab-ci.yml
+  - local: 'yml_configs/.frontend-test.yml'
+ 
+stages:
+    - test
+    - build
+    - release
 
+build-frontend-code-job:
+  stage: build 
+  image: docker:20.10.12-dind-rootless 
+  rules:
+    - changes:
+      - frontend/**/*
+  before_script:
+    - until docker info; do sleep 1; done
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - cd frontend
+    - docker build --tag $CI_REGISTRY_IMAGE/momo-frontend:$CI_COMMIT_SHA .
+    - docker push $CI_REGISTRY_IMAGE/momo-frontend:$CI_COMMIT_SHA
+
+upload-frontend-latest:
+  stage: release
+  image: docker:20.10.12-dind-rootless
+  rules:
+    - changes:
+      - frontend/**/*
+  variables:
+    GIT_STRATEGY: none
+  before_script:
+    - until docker info; do sleep 1; done
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - docker pull $CI_REGISTRY_IMAGE/momo-frontend:$CI_COMMIT_SHA
+    - docker tag $CI_REGISTRY_IMAGE/momo-frontend:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE/momo-frontend:latest
+    - docker push $CI_REGISTRY_IMAGE/momo-frontend:latest
 

@@ -1,0 +1,10 @@
+spotbugs-sast:
+  rules:
+    - when: never
+nodejs-scan-sast:
+  rules:
+    - when: never
+gosec-sast:
+  rules:
+    - when: never
+
